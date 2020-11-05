@@ -1,0 +1,26 @@
+@using lab1.Models
+@model Lista
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@using (Html.BeginForm("ChangeSlot", "Home"))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new {@class = "text-danger"})
+
+    <div class="text-center">
+        
+        @Html.DropDownListFor(Model=>Model.selectedSlot.group, new SelectList(Model.listy.groups), new {htmlAttributes =
+    new {@class = "form-control" }})
+        @Html.DropDownListFor(Model=>Model.selectedSlot.room, new SelectList(Model.listy.rooms), new {htmlAttributes =
+    new {@class = "form-control" }})
+        @Html.DropDownListFor(Model=>Model.selectedSlot.teacher, new SelectList(Model.listy.teachers), new {htmlAttributes =
+    new {@class = "form-control" }})
+        @Html.DropDownListFor(Model=>Model.selectedSlot.@class, new SelectList(Model.data.classes), new {htmlAttributes =
+    new {@class = "form-control" }})
+        <button name="slotid" class="btn btn-primary" type="submit" value=@Model.slotid>zapisz</button>
+    </div>
+    <input type="hidden" name="what" value=@Model.what >
+    <input type="hidden" name="selectedItem" value=@Model.selectedItem >
+}

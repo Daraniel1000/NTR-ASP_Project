@@ -1,0 +1,18 @@
+@using lab1.Models
+@model Lista
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@using (Html.BeginForm("DeleteSlot", "Home"))
+{
+    <input type="hidden" name="what" value=@Model.what >
+    <input type="hidden" name="selectedItem" value=@Model.selectedItem >
+    <input type="hidden" name="slotid" value=@Model.slotid >
+    <b>Czy usunąć te zajęcia z bazy?</b>
+    <div>
+        <button name="todelete" class="btn btn-primary" type="submit" value="1">tak</button>
+        <button name="todelete" class="btn btn-primary" type="submit" value="0">nie</button>
+    </div>
+
+}

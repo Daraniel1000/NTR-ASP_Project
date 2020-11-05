@@ -1,3 +1,3 @@
-# NTR-ASP
+# NTR20Z-Kapuściński-Maciej-293111
 
-pierwszy projekt z NTR
+Repozytorium na laboratoria z NTR

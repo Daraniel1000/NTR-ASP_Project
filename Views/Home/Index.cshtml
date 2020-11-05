@@ -1,0 +1,43 @@
+﻿@using lab1.Models
+@model Lista
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@using (Html.BeginForm("Index","Home"))
+{
+
+    <div>
+        <b>Zajęcia wybranej klasy</b>
+        @Html.DropDownListFor(model=>model.selectedItem, new SelectList(Model.data.groups) , new {htmlAttributes = new {@class = "form-control" }, onchange="this.form.submit()"})
+    </div>
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new {@class = "text-danger"})
+
+    
+
+    <div class="btn_row">
+        <button class="text" type="button">Godzina</button>
+        <button class="text" type="button">Pon</button>
+        <button class="text" type="button">Wt</button>
+        <button class="text" type="button">Sr</button>
+        <button class="text" type="button">Czw</button>
+        <button class="text" type="button">Pt</button>
+    </div>
+
+    int slotnr = 1;
+    string slotname;
+    @for (int i = 0; i < 8; i++)
+    {
+        <div class="btn_row">
+            <button class="text" type="button">@Lista.Godziny[i]</button>
+            @for (int j = 0; j < 5; j++)
+            {
+                slotname = "slot" + slotnr;
+                <button name="slotid" type="submit" class="slot" value=@slotnr asp-action="SelectSlot" >@ViewBag.Slot[slotnr]</button>
+                ++slotnr;
+            }
+        </div>
+    }
+    <input type="hidden" name="what" value="1" >
+}
