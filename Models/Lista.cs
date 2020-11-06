@@ -15,6 +15,7 @@ namespace lab1.Models
             string jsonString = File.ReadAllText("data.json");
             data = JsonSerializer.Deserialize<Data>(jsonString);
             listy = new Listy();
+            what = "1";
         }
 
         public static string[] Dni = { "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek" };
@@ -35,6 +36,37 @@ namespace lab1.Models
         public Data data { get; set; }
 
         public string selectedItem { get; set; }
+
+        public string tytul
+        {
+            get
+            {
+                switch (Convert.ToInt32(what))
+                {
+                    case 1:
+                        return "Zajęcia wybranej klasy";
+                    case 2:
+                        return "Zajęcia w wybranej sali";
+                    case 3:
+                        return "Zajęcia wybranego nauczyciela";
+                }
+                return "";
+            }
+        }
+
+        public SelectList getSelectList()
+        {
+            switch (Convert.ToInt32(what))
+            {
+                case 1:
+                    return new SelectList(data.groups);
+                case 2:
+                    return new SelectList(data.rooms);
+                case 3:
+                    return new SelectList(data.teachers);
+            }
+            return null;
+        }
 
         public string getSlotRooms(int slot)
         {

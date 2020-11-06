@@ -41,19 +41,8 @@ namespace lab1.Controllers
                 lista.selectedSlot = lista.data.getSlot(lista.selectedID, iroom, igroup, iteacher);
                 lista.deleteSlot(lista.selectedSlot);
             }
-            switch (Convert.ToInt32(lista.what))
-            {
-                case 1:
-                    getSlotGroups(lista);
-                    return View("Index", lista);
-                case 2:
-                    getSlotRooms(lista);
-                    return View("Rooms", lista);
-                case 3:
-                    getSlotTeachers(lista);
-                    return View("Teachers", lista);
-            }
-            return Index();
+            getSlotGroups(lista);
+            return View("Index", lista);
         }
 
         [HttpPost]
@@ -113,45 +102,29 @@ namespace lab1.Controllers
             lista.selectedSlot.slot = Convert.ToInt32(lista.slotid);
             if (lista.data.isSlotOccupied(lista.selectedSlot)) throw new Exception("Slot already occupied");
             lista.changeSlot(lista.selectedSlot);
-            switch (Convert.ToInt32(lista.what))
-            {
-                case 1:
-                    getSlotGroups(lista);
-                    return View("Index", lista);
-                case 2:
-                    getSlotRooms(lista);
-                    return View("Rooms", lista);
-                case 3:
-                    getSlotTeachers(lista);
-                    return View("Teachers", lista);
-            }
-            return Index();
+            getSlotGroups(lista);
+            return View("Index", lista);
         }
 
         public void getSlotGroups(Lista lista)
         {
             ViewBag.Slot = new string[41];
+            int what = Convert.ToInt32(lista.what);
             for (int i = 1; i < 41; ++i)
             {
-                ViewBag.Slot[i] = lista.getSlotGroups(i);
-            }
-        }
+                switch (what)
+                {
+                    case 1:
+                        ViewBag.Slot[i] = lista.getSlotGroups(i);
+                        break;
+                    case 2:
+                        ViewBag.Slot[i] = lista.getSlotRooms(i);
+                        break;
+                    case 3:
+                        ViewBag.Slot[i] = lista.getSlotTeachers(i);
+                        break;
+                }
 
-        public void getSlotRooms(Lista lista)
-        {
-            ViewBag.Slot = new string[41];
-            for (int i = 1; i < 41; ++i)
-            {
-                ViewBag.Slot[i] = lista.getSlotRooms(i);
-            }
-        }
-
-        public void getSlotTeachers(Lista lista)
-        {
-            ViewBag.Slot = new string[41];
-            for (int i = 1; i < 41; ++i)
-            {
-                ViewBag.Slot[i] = lista.getSlotTeachers(i);
             }
         }
 
@@ -169,41 +142,21 @@ namespace lab1.Controllers
             {
                 getSlotGroups(lista);
             }
-            return View(lista);
+            return View("Index", lista);
         }
 
         public IActionResult Rooms()
         {
-            Lista lista = new Lista();
-            getSlotRooms(lista);
-            return View(lista);
-        }
-
-        [HttpPost]
-        public IActionResult Rooms(Lista lista)
-        {
-            if (ModelState.IsValid)
-            {
-                getSlotRooms(lista);
-            }
-            return View(lista);
+            Lista lista = new Lista() { what = "2" };
+            getSlotGroups(lista);
+            return View("Index", lista);
         }
 
         public IActionResult Teachers()
         {
-            Lista lista = new Lista();
-            getSlotTeachers(lista);
-            return View(lista);
-        }
-
-        [HttpPost]
-        public IActionResult Teachers(Lista lista)
-        {
-            if (ModelState.IsValid)
-            {
-                getSlotTeachers(lista);
-            }
-            return View(lista);
+            Lista lista = new Lista() { what = "3" };
+            getSlotGroups(lista);
+            return View("Index", lista);
         }
 
         public IActionResult Privacy()

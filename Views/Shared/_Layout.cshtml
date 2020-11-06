@@ -8,28 +8,30 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <style>
+        .center {
+            align-items: center;
+            text-align: center;
+
+        }
+
         .title {
-        font-size: x-large;
+            font-size: x-large;
         }
 
         .text {
-        background-color: white;
-        color: black;
-        border: 2px solid black;
-        padding: 5px;
-        width: 100px;
+            background-color: white;
+            color: black;
+            border: 2px solid black;
+            padding: 5px;
+            width: 110px;
         }
 
         .slot {
-        background-color: lightblue;
-        color: black;
-        border: 2px solid black;
-        padding: 5px;
-        width: 100px;
-        }
-
-        .btn_row {
-        margin-bottom: 5px;
+            background-color: lightblue;
+            color: black;
+            border: 2px solid black;
+            padding: 5px;
+            width: 110px;
         }
     </style>
 </head>
@@ -40,7 +42,7 @@
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">lab1</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
@@ -49,12 +51,11 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Rooms">Sale</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home"
-asp-action="Index">Klasy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Klasy</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home"
-asp-action="Teachers">Nauczyciele</a>
+                                asp-action="Teachers">Nauczyciele</a>
                         </li>
                     </ul>
                 </div>
@@ -75,6 +76,11 @@ asp-action="Teachers">Nauczyciele</a>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        function myFunction(x) {
+            document.getElementById("slot").value = x;
+        }
+    </script>
     @RenderSection("Scripts", required: false)
 </body>
 
