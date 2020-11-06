@@ -1,7 +1,7 @@
 ﻿@using lab1.Models
 @model Lista
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Planer";
 }
 
 @using (Html.BeginForm("Index","Home"))
@@ -24,6 +24,11 @@
         <button class="text" type="button">Pt</button>
         @Html.DropDownListFor(model=>model.selectedItem, Model.getSelectList() , new {htmlAttributes = new {@class = "form-control" }, onchange="this.form.submit()"})
     </div>
+    <input type="hidden" name="what" value=@Model.what >
+}
+
+@using(Html.BeginForm("SelectSlot", "Home"))
+{
 
     int slotnr = 1;
     string slotname;
@@ -34,10 +39,12 @@
             @for (int j = 0; j < 5; j++)
             {
                 slotname = "slot" + slotnr;
-                <button name="slotid" type="submit" class="slot" value=@slotnr asp-action="SelectSlot" >@ViewBag.Slot[slotnr]</button>
+                <button name="slotid" type="button" class="slot" value=@slotnr ondblclick="myFunction(@slotnr); this.form.submit();" asp-action="SelectSlot" >@ViewBag.Slot[slotnr]</button>
                 ++slotnr;
             }
         </div>
     }
     <input type="hidden" name="what" value=@Model.what >
+    <input type="hidden" name="selectedItem" value=@Model.selectedItem >
+    <input type="hidden" id="slot" name="slotid" value="0">
 }
