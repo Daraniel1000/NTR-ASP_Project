@@ -1,0 +1,93 @@
+Build started...
+Build succeeded.
+CREATE TABLE IF NOT EXISTS `__EFMigrationsHistory` (
+    `MigrationId` varchar(150) NOT NULL,
+    `ProductVersion` varchar(32) NOT NULL,
+    PRIMARY KEY (`MigrationId`)
+);
+
+CREATE TABLE `groups` (
+    `GroupID` int NOT NULL AUTO_INCREMENT,
+    `name` varchar(30) NOT NULL,
+    `Comment` varchar(4000) NULL,
+    `Timestamp` varbinary(4000) NULL,
+    PRIMARY KEY (`GroupID`)
+);
+
+CREATE TABLE `rooms` (
+    `RoomID` int NOT NULL AUTO_INCREMENT,
+    `name` varchar(30) NOT NULL,
+    `Comment` varchar(4000) NULL,
+    `Timestamp` varbinary(4000) NULL,
+    PRIMARY KEY (`RoomID`)
+);
+
+CREATE TABLE `slots` (
+    `SlotID` int NOT NULL AUTO_INCREMENT,
+    `name` varchar(30) NOT NULL,
+    `Comment` varchar(4000) NULL,
+    `Timestamp` varbinary(4000) NULL,
+    PRIMARY KEY (`SlotID`)
+);
+
+CREATE TABLE `subjects` (
+    `SubjectID` int NOT NULL AUTO_INCREMENT,
+    `name` varchar(30) NOT NULL,
+    `Comment` varchar(4000) NULL,
+    `Timestamp` varbinary(4000) NULL,
+    PRIMARY KEY (`SubjectID`)
+);
+
+CREATE TABLE `teachers` (
+    `TeacherID` int NOT NULL AUTO_INCREMENT,
+    `name` varchar(30) NOT NULL,
+    `Comment` varchar(4000) NULL,
+    `Timestamp` varbinary(4000) NULL,
+    PRIMARY KEY (`TeacherID`)
+);
+
+CREATE TABLE `activities` (
+    `ActivityID` int NOT NULL AUTO_INCREMENT,
+    `SubjectID` int NOT NULL,
+    `GroupID` int NOT NULL,
+    `RoomID` int NOT NULL,
+    `SlotID` int NOT NULL,
+    `Timestamp` varbinary(4000) NULL,
+    PRIMARY KEY (`ActivityID`),
+    CONSTRAINT `FK_activities_groups_GroupID` FOREIGN KEY (`GroupID`) REFERENCES `groups` (`GroupID`) ON DELETE CASCADE,
+    CONSTRAINT `FK_activities_rooms_RoomID` FOREIGN KEY (`RoomID`) REFERENCES `rooms` (`RoomID`) ON DELETE CASCADE,
+    CONSTRAINT `FK_activities_slots_SlotID` FOREIGN KEY (`SlotID`) REFERENCES `slots` (`SlotID`) ON DELETE CASCADE,
+    CONSTRAINT `FK_activities_subjects_SubjectID` FOREIGN KEY (`SubjectID`) REFERENCES `subjects` (`SubjectID`) ON DELETE CASCADE
+);
+
+CREATE TABLE `assignments` (
+    `AssignmentID` int NOT NULL AUTO_INCREMENT,
+    `SubjectID` int NOT NULL,
+    `GroupID` int NOT NULL,
+    `TeacherID` int NOT NULL,
+    `Comment` varchar(4000) NULL,
+    `Timestamp` varbinary(4000) NULL,
+    PRIMARY KEY (`AssignmentID`),
+    CONSTRAINT `FK_assignments_groups_GroupID` FOREIGN KEY (`GroupID`) REFERENCES `groups` (`GroupID`) ON DELETE CASCADE,
+    CONSTRAINT `FK_assignments_subjects_SubjectID` FOREIGN KEY (`SubjectID`) REFERENCES `subjects` (`SubjectID`) ON DELETE CASCADE,
+    CONSTRAINT `FK_assignments_teachers_TeacherID` FOREIGN KEY (`TeacherID`) REFERENCES `teachers` (`TeacherID`) ON DELETE CASCADE
+);
+
+CREATE INDEX `IX_activities_GroupID` ON `activities` (`GroupID`);
+
+CREATE INDEX `IX_activities_RoomID` ON `activities` (`RoomID`);
+
+CREATE INDEX `IX_activities_SlotID` ON `activities` (`SlotID`);
+
+CREATE INDEX `IX_activities_SubjectID` ON `activities` (`SubjectID`);
+
+CREATE INDEX `IX_assignments_GroupID` ON `assignments` (`GroupID`);
+
+CREATE INDEX `IX_assignments_SubjectID` ON `assignments` (`SubjectID`);
+
+CREATE INDEX `IX_assignments_TeacherID` ON `assignments` (`TeacherID`);
+
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
+VALUES ('20201119170523_initial', '3.1.9');
+
+
