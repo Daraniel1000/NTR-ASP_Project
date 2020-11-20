@@ -41,8 +41,9 @@ namespace lab1.Controllers
                 lista.selectedSlot = lista.data.getSlot(lista.selectedID, iroom, igroup, iteacher);
                 lista.deleteSlot(lista.selectedSlot);
             }
-            getSlotGroups(lista);
-            return View("Index", lista);
+            Lista fresh = new Lista() { what = lista.what, selectedItem = lista.selectedItem };
+            getSlotGroups(fresh);
+            return View("Index", fresh);
         }
 
         [HttpPost]
@@ -101,7 +102,10 @@ namespace lab1.Controllers
         {
             lista.selectedSlot.slot = Convert.ToInt32(lista.slotid);
             if (lista.data.isSlotOccupied(lista.selectedSlot)) throw new Exception("Slot already occupied");
-            lista.changeSlot(lista.selectedSlot);
+            if (!lista.changeSlot(lista.selectedSlot))
+            {
+                return View("TeacherError");
+            }
             getSlotGroups(lista);
             return View("Index", lista);
         }
