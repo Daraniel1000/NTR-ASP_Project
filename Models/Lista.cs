@@ -185,7 +185,8 @@ namespace lab1.Models
 
         public void deleteSlot(Zajecia toDelete)
         {
-            data.emptySlot(toDelete);
+            if(!data.isSlotOccupied(toDelete)) return;
+            data.activities.Remove(data.getSlot(toDelete));
             using(var db = new MyContext())
             {
                 db.activities.Remove(db.activities.Find(toDelete.activityID));
@@ -295,9 +296,15 @@ namespace lab1.Models
             return null;
         }
 
+        public Zajecia getSlotByID(int ID)
+        {
+            return activities.Find(x=>x.activityID == ID);
+        }
+
         public void emptySlot(Zajecia other)
         {
-            if (isSlotOccupied(other)) activities.Remove(getSlot(other));
+            activities.Remove(getSlotByID(other.activityID));
+            //if (isSlotOccupied(other)) activities.Remove(getSlot(other));
         }
 
         public void emptySlot(int slot, string iroom = "", string igroup = "", string iteacher = "")

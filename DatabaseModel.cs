@@ -8,7 +8,7 @@ namespace NTR20Z
     {
         public int TeacherID { get; set; }
         public string name { get; set; }
-        public string? Comment { get; set; }
+        public string Comment { get; set; }
         [Timestamp]
         public DateTime? Timestamp { get; set; }
     }
@@ -17,7 +17,7 @@ namespace NTR20Z
     {
         public int SubjectID { get; set; }
         public string name { get; set; }
-        public string? Comment { get; set; }
+        public string Comment { get; set; }
         [Timestamp]
         public DateTime? Timestamp { get; set; }
         virtual public List<Activity> activities { get; set; }
@@ -27,7 +27,7 @@ namespace NTR20Z
     {
         public int SlotID { get; set; }
         public string name { get; set; }
-        public string? Comment { get; set; }
+        public string Comment { get; set; }
         [Timestamp]
         public DateTime? Timestamp { get; set; }
     }
@@ -36,7 +36,7 @@ namespace NTR20Z
     {
         public int GroupID { get; set; }
         public string name { get; set; }
-        public string? Comment { get; set; }
+        public string Comment { get; set; }
         [Timestamp]
         public DateTime? Timestamp { get; set; }
         virtual public List<Activity> activities { get; set; }
@@ -46,7 +46,7 @@ namespace NTR20Z
     {
         public int RoomID { get; set; }
         public string name { get; set; }
-        public string? Comment { get; set; }
+        public string Comment { get; set; }
         [Timestamp]
         public DateTime? Timestamp { get; set; }
 
@@ -59,7 +59,7 @@ namespace NTR20Z
         public int SubjectID { get; set; }
         public int GroupID { get; set; }
         public int TeacherID { get; set; }
-        public string? Comment { get; set; }
+        public string Comment { get; set; }
         [Timestamp]
         public DateTime? Timestamp { get; set; }
 
