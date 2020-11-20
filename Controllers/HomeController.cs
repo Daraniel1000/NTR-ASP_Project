@@ -101,7 +101,10 @@ namespace lab1.Controllers
         {
             lista.selectedSlot.slot = Convert.ToInt32(lista.slotid);
             if (lista.data.isSlotOccupied(lista.selectedSlot)) throw new Exception("Slot already occupied");
-            lista.changeSlot(lista.selectedSlot);
+            if(!lista.changeSlot(lista.selectedSlot))
+            {
+                return View("TeacherError");
+            }
             getSlotGroups(lista);
             return View("Index", lista);
         }

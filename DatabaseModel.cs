@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace NTR20Z
 {
@@ -18,6 +19,7 @@ namespace NTR20Z
         public string? Comment { get; set; }
         [Timestamp]
         public byte[]? Timestamp { get; set; }
+        virtual public List<Activity> activities { get; set; }
     }
 
     public class Slot
@@ -36,6 +38,7 @@ namespace NTR20Z
         public string? Comment { get; set; }
         [Timestamp]
         public byte[]? Timestamp { get; set; }
+        virtual public List<Activity> activities { get; set; }
     }
 
     public class Room
@@ -45,6 +48,8 @@ namespace NTR20Z
         public string? Comment { get; set; }
         [Timestamp]
         public byte[]? Timestamp { get; set; }
+
+        virtual public List<Activity> activities { get; set; }
     }
 
     public class Assignment
@@ -64,11 +69,11 @@ namespace NTR20Z
 
     public class Activity
     {
-        public int ActivityID {get;set;}
+        public int ActivityID { get; set; }
         public int SubjectID { get; set; }
         public int GroupID { get; set; }
-        public int RoomID{get;set;}
-        public int SlotID{get;set;}
+        public int RoomID { get; set; }
+        public int SlotID { get; set; }
         [Timestamp]
         public byte[]? Timestamp { get; set; }
 

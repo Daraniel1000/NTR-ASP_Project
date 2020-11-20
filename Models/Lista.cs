@@ -4,6 +4,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.IO;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using NTR20Z;
+using System.Linq;
 
 namespace lab1.Models
 {
@@ -12,8 +14,50 @@ namespace lab1.Models
     {
         public Lista()
         {
-            string jsonString = File.ReadAllText("data.json");
-            data = JsonSerializer.Deserialize<Data>(jsonString);
+            //string jsonString = File.ReadAllText("data.json");
+            //data = JsonSerializer.Deserialize<Data>(jsonString);
+            using (var db = new MyContext())
+            {
+                data = new Data();
+                foreach (var teacher in db.teachers)
+                {
+                    data.teachers.Add(teacher.name);
+                }
+                foreach (var subject in db.subjects)
+                {
+                    data.@classes.Add(subject.name);
+                }
+                foreach (var group in db.groups)
+                {
+                    data.groups.Add(group.name);
+                }
+                foreach (var room in db.rooms)
+                {
+                    data.rooms.Add(room.name);
+                }
+                foreach (var activity in db.activities.Join(db.assignments, activity => new Tuple<int, int>(activity.GroupID, activity.SubjectID),
+                assignment => new Tuple<int, int>(assignment.GroupID, assignment.SubjectID), (activity, assignment) => new
+                {
+                    ActivityID = activity.ActivityID,
+                    SlotID = activity.SlotID,
+                    GroupID = activity.GroupID,
+                    RoomID = activity.RoomID,
+                    TeacherID = assignment.TeacherID,
+                    SubjectID = assignment.SubjectID
+                }))
+                {
+                    data.activities.Add(new Zajecia
+                    {
+                        activityID = activity.ActivityID,
+                        slot = activity.SlotID,
+                        group = db.groups.Find(activity.GroupID).name,
+                        room = db.rooms.Find(activity.RoomID).name,
+                        teacher = db.teachers.Find(activity.TeacherID).name,
+                        @class = db.subjects.Find(activity.SubjectID).name
+                    });
+                }
+
+            }
             listy = new Listy();
             what = "1";
         }
@@ -95,11 +139,42 @@ namespace lab1.Models
             return (zajecia.room + " " + zajecia.@class + " " + zajecia.group);
         }
 
-        public void changeSlot(Zajecia toChange)
+        public bool changeSlot(Zajecia toChange)
         {
-            if (data.isSlotOccupied(toChange)) data.getSlot(toChange).Change(toChange);
-            else data.activities.Add(toChange);
-            saveData();
+            if (data.isSlotOccupied(toChange)) throw new Exception("Slot already occupied");
+            else 
+            {
+                data.activities.Add(toChange);
+                using (var db = new MyContext())
+                {
+                    ZajeciaDB toAdd = new ZajeciaDB(toChange);
+
+                    if(!db.assignments.Any(a=>a.TeacherID == toAdd.teacher && a.GroupID == toAdd.group))
+                    {
+                        db.assignments.Add(new Assignment()
+                        {
+                            TeacherID = toAdd.teacher,
+                            GroupID = toAdd.group,
+                            SubjectID = toAdd.subject
+                        });
+                    }
+                    else
+                    {
+                        Assignment ass = db.assignments.Single(ass=>ass.TeacherID == toAdd.teacher && ass.GroupID == toAdd.group);
+                        if(ass.SubjectID != toAdd.subject) return false;
+                    }
+                    db.activities.Add(new Activity()
+                    {
+                        SubjectID = toAdd.subject, 
+                        GroupID = toAdd.group,
+                        RoomID = toAdd.room,
+                        SlotID = toAdd.slot
+                    });
+                    db.SaveChanges();
+                }
+            }
+            //saveData();
+            return true;
         }
 
         public void saveData()
@@ -111,7 +186,12 @@ namespace lab1.Models
         public void deleteSlot(Zajecia toDelete)
         {
             data.emptySlot(toDelete);
-            saveData();
+            using(var db = new MyContext())
+            {
+                db.activities.Remove(db.activities.Find(toDelete.activityID));
+                db.SaveChanges();
+            }
+            //saveData();
         }
 
     }
@@ -129,8 +209,32 @@ namespace lab1.Models
         public List<string> teachers { get; set; }
     }
 
+    public class ZajeciaDB
+    {
+        public int room { get; set; }
+        public int group { get; set; }
+        public int subject { get; set; }
+        public int slot { get; set; }
+        public int teacher { get; set; }
+
+        private ZajeciaDB() {}
+
+        public ZajeciaDB(Zajecia other)
+        {
+            using(var db = new MyContext())
+            {
+                room = db.rooms.Single(t => t.name == other.room).RoomID;
+                group = db.groups.Single(t => t.name == other.group).GroupID;
+                subject = db.subjects.Single(t => t.name == other.@class).SubjectID;
+                teacher = db.teachers.Single(t => t.name == other.teacher).TeacherID;
+                slot = other.slot;
+            }
+        }
+    }
+
     public class Zajecia : IEquatable<Zajecia>
     {
+        public int activityID { get; set; }
         public string room { get; set; }
         public string group { get; set; }
         public string @class { get; set; }
@@ -155,6 +259,14 @@ namespace lab1.Models
 
     public class Data
     {
+        public Data()
+        {
+            rooms = new List<string>();
+            groups = new List<string>();
+            classes = new List<string>();
+            teachers = new List<string>();
+            activities = new List<Zajecia>();
+        }
         public List<string> rooms { get; set; }
         public List<string> groups { get; set; }
         public List<string> classes { get; set; }
