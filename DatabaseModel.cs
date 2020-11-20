@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
+using System;
 
 namespace NTR20Z
 {
@@ -9,7 +10,7 @@ namespace NTR20Z
         public string name { get; set; }
         public string? Comment { get; set; }
         [Timestamp]
-        public byte[]? Timestamp { get; set; }
+        public DateTime? Timestamp { get; set; }
     }
 
     public class Subject
@@ -18,7 +19,7 @@ namespace NTR20Z
         public string name { get; set; }
         public string? Comment { get; set; }
         [Timestamp]
-        public byte[]? Timestamp { get; set; }
+        public DateTime? Timestamp { get; set; }
         virtual public List<Activity> activities { get; set; }
     }
 
@@ -28,7 +29,7 @@ namespace NTR20Z
         public string name { get; set; }
         public string? Comment { get; set; }
         [Timestamp]
-        public byte[]? Timestamp { get; set; }
+        public DateTime? Timestamp { get; set; }
     }
 
     public class Group
@@ -37,7 +38,7 @@ namespace NTR20Z
         public string name { get; set; }
         public string? Comment { get; set; }
         [Timestamp]
-        public byte[]? Timestamp { get; set; }
+        public DateTime? Timestamp { get; set; }
         virtual public List<Activity> activities { get; set; }
     }
 
@@ -47,7 +48,7 @@ namespace NTR20Z
         public string name { get; set; }
         public string? Comment { get; set; }
         [Timestamp]
-        public byte[]? Timestamp { get; set; }
+        public DateTime? Timestamp { get; set; }
 
         virtual public List<Activity> activities { get; set; }
     }
@@ -60,7 +61,7 @@ namespace NTR20Z
         public int TeacherID { get; set; }
         public string? Comment { get; set; }
         [Timestamp]
-        public byte[]? Timestamp { get; set; }
+        public DateTime? Timestamp { get; set; }
 
         public virtual Subject Subject { get; set; }
         public virtual Group Group { get; set; }
@@ -75,7 +76,7 @@ namespace NTR20Z
         public int RoomID { get; set; }
         public int SlotID { get; set; }
         [Timestamp]
-        public byte[]? Timestamp { get; set; }
+        public DateTime? Timestamp { get; set; }
 
         public virtual Subject Subject { get; set; }
         public virtual Group Group { get; set; }

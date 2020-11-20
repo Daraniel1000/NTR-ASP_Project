@@ -26,35 +26,46 @@ namespace NTR20Z
             {
                entity.Property(entity=>entity.name).IsRequired().IsUnicode(false).HasMaxLength(30);
                entity.Property(entity=>entity.Comment).IsUnicode(false).HasMaxLength(4000);
+               entity.Property(entity=>entity.Timestamp).HasColumnType("Timestamp");
             });
 
             modelBuilder.Entity<Subject>(entity=>
             {
                entity.Property(entity=>entity.name).IsRequired().IsUnicode(false).HasMaxLength(30);
                entity.Property(entity=>entity.Comment).IsUnicode(false).HasMaxLength(4000);
+               entity.Property(entity=>entity.Timestamp).HasColumnType("Timestamp");
             });
 
             modelBuilder.Entity<Slot>(entity=>
             {
                entity.Property(entity=>entity.name).IsRequired().IsUnicode(false).HasMaxLength(30);
                entity.Property(entity=>entity.Comment).IsUnicode(false).HasMaxLength(4000);
+               entity.Property(entity=>entity.Timestamp).HasColumnType("Timestamp");
             });
 
             modelBuilder.Entity<Group>(entity=>
             {
                entity.Property(entity=>entity.name).IsRequired().IsUnicode(false).HasMaxLength(30);
                entity.Property(entity=>entity.Comment).IsUnicode(false).HasMaxLength(4000);
+               entity.Property(entity=>entity.Timestamp).HasColumnType("Timestamp");
             });
 
             modelBuilder.Entity<Room>(entity=>
             {
                entity.Property(entity=>entity.name).IsRequired().IsUnicode(false).HasMaxLength(30);
                entity.Property(entity=>entity.Comment).IsUnicode(false).HasMaxLength(4000);
+               entity.Property(entity=>entity.Timestamp).HasColumnType("Timestamp");
             });
 
             modelBuilder.Entity<Assignment>(entity=>
             {
                entity.Property(entity=>entity.Comment).IsUnicode(false).HasMaxLength(4000);
+               entity.Property(entity=>entity.Timestamp).HasColumnType("Timestamp");
+            });
+
+            modelBuilder.Entity<Activity>(entity=>
+            {
+               entity.Property(entity=>entity.Timestamp).HasColumnType("Timestamp");
             });
         }
     }
