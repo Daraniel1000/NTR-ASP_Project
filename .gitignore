@@ -4,9 +4,9 @@
 # 3.0 templates should be even less
 # wwwroot/lib/
 # When wwwroot/lib/ is commented out, excluse .min and .map files
-*.min.css
-*.min.js
-*.map
+#*.min.css
+#*.min.js
+#*.map
 
 _build/
 _site/
@@ -15,7 +15,7 @@ Properties/
 # See #577
 # Use git add -f to force override .sln when required. Not needed in most cases.
 # git add -f myProj.sln
-*.sln
+#*.sln
 
 Project_Readme.html
 
