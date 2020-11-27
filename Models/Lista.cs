@@ -58,7 +58,7 @@ namespace lab1.Models
                 }
 
             }
-            listy = new Listy();
+            //listy = new Listy();
             what = "1";
         }
 
@@ -80,6 +80,8 @@ namespace lab1.Models
         public Data data { get; set; }
 
         public string selectedItem { get; set; }
+
+        public string jsonString { get; set; }
 
         public string tytul
         {
@@ -142,30 +144,20 @@ namespace lab1.Models
         public bool changeSlot(Zajecia toChange)
         {
             if (data.isSlotOccupied(toChange)) throw new Exception("Slot already occupied");
-            else 
+            else
             {
                 data.activities.Add(toChange);
                 using (var db = new MyContext())
                 {
                     ZajeciaDB toAdd = new ZajeciaDB(toChange);
 
-                    if(!db.assignments.Any(a=>a.TeacherID == toAdd.teacher && a.GroupID == toAdd.group))
+                    if (!db.assignments.Any(a => a.TeacherID == toAdd.teacher && a.GroupID == toAdd.group))
                     {
-                        db.assignments.Add(new Assignment()
-                        {
-                            TeacherID = toAdd.teacher,
-                            GroupID = toAdd.group,
-                            SubjectID = toAdd.subject
-                        });
-                    }
-                    else
-                    {
-                        Assignment ass = db.assignments.Single(ass=>ass.TeacherID == toAdd.teacher && ass.GroupID == toAdd.group);
-                        if(ass.SubjectID != toAdd.subject) return false;
+                        throw new Exception("The teacher is not assigned to this class! An assignment menu should have appeared.");
                     }
                     db.activities.Add(new Activity()
                     {
-                        SubjectID = toAdd.subject, 
+                        SubjectID = toAdd.subject,
                         GroupID = toAdd.group,
                         RoomID = toAdd.room,
                         SlotID = toAdd.slot
@@ -185,9 +177,9 @@ namespace lab1.Models
 
         public void deleteSlot(Zajecia toDelete)
         {
-            if(!data.isSlotOccupied(toDelete)) return;
+            if (!data.isSlotOccupied(toDelete)) return;
             data.activities.Remove(data.getSlot(toDelete));
-            using(var db = new MyContext())
+            using (var db = new MyContext())
             {
                 db.activities.Remove(db.activities.Find(toDelete.activityID));
                 db.SaveChanges();
@@ -218,16 +210,16 @@ namespace lab1.Models
         public int slot { get; set; }
         public int teacher { get; set; }
 
-        private ZajeciaDB() {}
+        private ZajeciaDB() { }
 
         public ZajeciaDB(Zajecia other)
         {
-            using(var db = new MyContext())
+            using (var db = new MyContext())
             {
-                room = db.rooms.Single(t => t.name == other.room).RoomID;
-                group = db.groups.Single(t => t.name == other.group).GroupID;
-                subject = db.subjects.Single(t => t.name == other.@class).SubjectID;
-                teacher = db.teachers.Single(t => t.name == other.teacher).TeacherID;
+                room = other.room!=null?db.rooms.SingleOrDefault(t => t.name == other.room).RoomID:0;
+                group = db.groups.SingleOrDefault(t => t.name == other.group).GroupID;
+                subject = other.@class!=null?db.subjects.SingleOrDefault(t => t.name == other.@class).SubjectID:0;
+                teacher = db.teachers.SingleOrDefault(t => t.name == other.teacher).TeacherID;
                 slot = other.slot;
             }
         }
@@ -298,7 +290,7 @@ namespace lab1.Models
 
         public Zajecia getSlotByID(int ID)
         {
-            return activities.Find(x=>x.activityID == ID);
+            return activities.Find(x => x.activityID == ID);
         }
 
         public void emptySlot(Zajecia other)

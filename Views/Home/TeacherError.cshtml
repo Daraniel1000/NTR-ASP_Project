@@ -1,2 +1,25 @@
+@using lab1.Models
+@model Lista
+@{
+    ViewData["Title"] = "Planer";
+}
 
-<h2 class="text-danger">Błąd: Wybrany nauczyciel jest przydzielony do innego przedmiotu z tą klasą.</h2>
+@using (Html.BeginForm("SetAssignment", "Home"))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new {@class = "text-danger"})
+
+    <div class="align-middle text-center">
+        
+        <h3>Czego @Model.selectedSlot.teacher uczy @Model.selectedSlot.group?</h3>
+        @Html.DropDownListFor(Model=>Model.selectedSlot.@class, new SelectList(Model.listy.groups), new {htmlAttributes =
+    new {@class = "form-control" }})
+        <button name="slotid" class="btn btn-primary" type="submit" value=@Model.slotid>zapisz</button>
+        <button name="slotid" class="btn btn-primary" type="submit" value=@Model.slotid asp-action="Index">Anuluj</button>
+    </div>
+    <input type="hidden" name="what" value=@Model.what >
+    <input type="hidden" name="selectedItem" value=@Model.selectedItem >
+    <input type="hidden" name="jsonString" value="@Model.jsonString">
+    @Html.HiddenFor(Model=>Model.selectedSlot.teacher)
+    @Html.HiddenFor(Model=>Model.selectedSlot.group)
+}

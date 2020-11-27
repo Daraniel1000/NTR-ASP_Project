@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using lab1.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using NTR20Z;
 
 namespace lab1.Controllers
 {
@@ -86,14 +87,17 @@ namespace lab1.Controllers
                 if (!lista.data.isSlotOccupied(lista.selectedID, it))
                     lista.listy.rooms.Add(it);
             }
-            lista.selectedSlot = new Zajecia()
+            if (lista.selectedSlot == null)
             {
-                slot = lista.selectedID,
-                room = iroom,
-                group = igroup,
-                @class = lista.data.classes[0],
-                teacher = iteacher
-            };
+                lista.selectedSlot = new Zajecia()
+                {
+                    slot = lista.selectedID,
+                    room = iroom,
+                    group = igroup,
+                    @class = lista.data.classes[0],
+                    teacher = iteacher
+                };
+            }
             return View("SelectSlot", lista);
         }
 
@@ -101,6 +105,27 @@ namespace lab1.Controllers
         public IActionResult ChangeSlot(Lista lista)
         {
             lista.selectedSlot.slot = Convert.ToInt32(lista.slotid);
+            ZajeciaDB zaj = new ZajeciaDB(lista.selectedSlot);
+            using (var db = new MyContext())
+            {
+                if (!db.assignments.Any(ass => ass.TeacherID == zaj.teacher && ass.GroupID == zaj.group))
+                {
+                    lista.jsonString = System.Text.Json.JsonSerializer.Serialize(lista.selectedSlot);
+                    lista.listy = new Listy();
+                    var subjects = db.subjects.ToList();
+                    foreach (var it in subjects)
+                    {
+                        if (!db.assignments.Any(ass => ass.GroupID == zaj.group && ass.SubjectID == it.SubjectID))
+                        {
+                            lista.listy.groups.Add(it.name);
+                        }
+                    }
+                    if (!lista.listy.groups.Any()) return View("TeacherUnassignable");
+                    return View("TeacherError", lista);
+                }
+                zaj.subject = db.assignments.Single(ass => ass.GroupID == zaj.group && ass.TeacherID == zaj.teacher).SubjectID;
+                lista.selectedSlot.@class = db.subjects.Find(zaj.subject).name;
+            }
             if (lista.data.isSlotOccupied(lista.selectedSlot)) throw new Exception("Slot already occupied");
             if (!lista.changeSlot(lista.selectedSlot))
             {
@@ -108,6 +133,29 @@ namespace lab1.Controllers
             }
             getSlotGroups(lista);
             return View("Index", lista);
+        }
+
+        [HttpPost]
+        public IActionResult SetAssignment(Lista lista)
+        {
+            ZajeciaDB zaj = new ZajeciaDB(lista.selectedSlot);
+            zaj.slot = Convert.ToInt32(lista.slotid);
+            lista.selectedSlot = System.Text.Json.JsonSerializer.Deserialize<Zajecia>(lista.jsonString);
+            using (var db = new MyContext())
+            {
+                db.assignments.Add(new Assignment()
+                {
+                    TeacherID = zaj.teacher,
+                    GroupID = zaj.group,
+                    SubjectID = zaj.subject
+                });
+                db.SaveChanges();
+                lista.selectedSlot.@class = db.subjects.Find(zaj.subject).name;
+            }
+            lista.changeSlot(lista.selectedSlot);
+            Lista model = new Lista() { what = lista.what, selectedItem = lista.selectedItem };
+            getSlotGroups(model);
+            return View("Index", model);
         }
 
         public void getSlotGroups(Lista lista)
@@ -171,7 +219,7 @@ namespace lab1.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel { RequestId = System.Diagnostics.Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
