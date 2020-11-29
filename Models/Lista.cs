@@ -6,6 +6,8 @@ using System.IO;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NTR20Z;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace lab1.Models
 {
@@ -61,6 +63,8 @@ namespace lab1.Models
             //listy = new Listy();
             what = "1";
         }
+
+        public static Mutex mutex = new Mutex();
 
         public static string[] Dni = { "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek" };
         public static string[] Godziny = {"8:00-8:45", "8:55-9:40", "9:50-11:35", "11:55:12:40", "12:50:13:35", "13:45:14:30","14:40-15:25",
@@ -141,19 +145,45 @@ namespace lab1.Models
             return (zajecia.room + " " + zajecia.@class + " " + zajecia.group);
         }
 
-        public bool changeSlot(Zajecia toChange)
+        public void checkAssignment(ZajeciaDB toAdd)
         {
-            if (data.isSlotOccupied(toChange)) throw new Exception("Slot already occupied");
+            using (var db = new MyContext())
+            {
+                if (!db.assignments.Any(a => a.TeacherID == toAdd.teacher && a.GroupID == toAdd.group))
+                {
+                    throw new Exception("The teacher is not assigned to this class! An assignment menu should have appeared.");
+                }
+            }
+        }
+
+        public void changeSlot(Zajecia toChange)
+        {
+            ZajeciaDB toAdd = new ZajeciaDB(toChange);
+            checkAssignment(toAdd);
+            if (data.isSlotOccupied(toChange))
+            {
+                using (var db = new MyContext())
+                {
+                    Activity activity = db.activities.Single(ac => ac.SlotID == toAdd.slot && ac.GroupID == toAdd.group);
+                }
+            }
             else
             {
                 data.activities.Add(toChange);
                 using (var db = new MyContext())
                 {
-                    ZajeciaDB toAdd = new ZajeciaDB(toChange);
-
-                    if (!db.assignments.Any(a => a.TeacherID == toAdd.teacher && a.GroupID == toAdd.group))
+                    mutex.WaitOne();
+                    if (db.activities.Join(db.assignments, activity => new Tuple<int, int>(activity.GroupID, activity.SubjectID),
+                    assignment => new Tuple<int, int>(assignment.GroupID, assignment.SubjectID), (activity, assignment) => new
                     {
-                        throw new Exception("The teacher is not assigned to this class! An assignment menu should have appeared.");
+                        SlotID = activity.SlotID,
+                        GroupID = activity.GroupID,
+                        RoomID = activity.RoomID,
+                        TeacherID = assignment.TeacherID,
+                    }).Any(act => act.SlotID == toAdd.slot && (act.GroupID == toAdd.group || act.RoomID == toAdd.room || act.TeacherID == toAdd.teacher)))
+                    {
+                        mutex.ReleaseMutex();
+                        throw new Exception("1");
                     }
                     db.activities.Add(new Activity()
                     {
@@ -163,10 +193,10 @@ namespace lab1.Models
                         SlotID = toAdd.slot
                     });
                     db.SaveChanges();
+                    mutex.ReleaseMutex();
                 }
             }
             //saveData();
-            return true;
         }
 
         public void saveData()
@@ -216,9 +246,9 @@ namespace lab1.Models
         {
             using (var db = new MyContext())
             {
-                room = other.room!=null?db.rooms.SingleOrDefault(t => t.name == other.room).RoomID:0;
+                room = other.room != null ? db.rooms.SingleOrDefault(t => t.name == other.room).RoomID : 0;
                 group = db.groups.SingleOrDefault(t => t.name == other.group).GroupID;
-                subject = other.@class!=null?db.subjects.SingleOrDefault(t => t.name == other.@class).SubjectID:0;
+                subject = other.@class != null ? db.subjects.SingleOrDefault(t => t.name == other.@class).SubjectID : 0;
                 teacher = db.teachers.SingleOrDefault(t => t.name == other.teacher).TeacherID;
                 slot = other.slot;
             }

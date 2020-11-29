@@ -59,6 +59,7 @@ namespace NTR20Z
 
             modelBuilder.Entity<Assignment>(entity=>
             {
+               //entity.HasKey(ass=>new{ass.GroupID, ass.TeacherID});
                entity.Property(entity=>entity.Comment).IsUnicode(false).HasMaxLength(4000);
                entity.Property(entity=>entity.Timestamp).HasColumnType("Timestamp").IsConcurrencyToken();
             });

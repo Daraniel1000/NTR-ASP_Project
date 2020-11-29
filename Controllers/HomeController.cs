@@ -126,11 +126,16 @@ namespace lab1.Controllers
                 zaj.subject = db.assignments.Single(ass => ass.GroupID == zaj.group && ass.TeacherID == zaj.teacher).SubjectID;
                 lista.selectedSlot.@class = db.subjects.Find(zaj.subject).name;
             }
-            if (lista.data.isSlotOccupied(lista.selectedSlot)) throw new Exception("Slot already occupied");
-            if (!lista.changeSlot(lista.selectedSlot))
+            try
             {
-                return View("TeacherError");
+                lista.changeSlot(lista.selectedSlot);
             }
+            catch(Exception e)
+            {
+                if(e.Message[0]!='1') throw e;
+                return View("UpdateError");
+            }
+
             getSlotGroups(lista);
             return View("Index", lista);
         }
@@ -143,6 +148,12 @@ namespace lab1.Controllers
             lista.selectedSlot = System.Text.Json.JsonSerializer.Deserialize<Zajecia>(lista.jsonString);
             using (var db = new MyContext())
             {
+                Lista.mutex.WaitOne();
+                if (db.assignments.Any(ass => ass.GroupID == zaj.group && (ass.TeacherID == zaj.teacher || ass.SubjectID == zaj.subject)))
+                {
+                    Lista.mutex.ReleaseMutex();
+                    return View("TeacherUnassignable");
+                }
                 db.assignments.Add(new Assignment()
                 {
                     TeacherID = zaj.teacher,
@@ -150,9 +161,18 @@ namespace lab1.Controllers
                     SubjectID = zaj.subject
                 });
                 db.SaveChanges();
+                Lista.mutex.ReleaseMutex();
                 lista.selectedSlot.@class = db.subjects.Find(zaj.subject).name;
             }
-            lista.changeSlot(lista.selectedSlot);
+            try
+            {
+                lista.changeSlot(lista.selectedSlot);
+            }
+            catch (Exception e)
+            {
+                if (e.Message[0] != '1') throw e;
+                return View("UpdateError");
+            }
             Lista model = new Lista() { what = lista.what, selectedItem = lista.selectedItem };
             getSlotGroups(model);
             return View("Index", model);
