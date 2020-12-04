@@ -1,2 +1,9 @@
-
+@using lab1.Models
+@model Err
 <h2 class="text-danger">Błąd: Nie udało się przydzielić wybranego nauczyciela do wybranej klasy</h2>
+@using(Html.BeginForm())
+{
+    <button type="submit" class="btn btn-secondary" asp-action="Index">Powrót do listy zajęć</button>
+    @Html.HiddenFor(Model=>Model.selectedItem)
+    @Html.HiddenFor(Model=>Model.what)
+}

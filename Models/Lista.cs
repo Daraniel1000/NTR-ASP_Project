@@ -162,10 +162,7 @@ namespace lab1.Models
             checkAssignment(toAdd);
             if (data.isSlotOccupied(toChange))
             {
-                using (var db = new MyContext())
-                {
-                    Activity activity = db.activities.Single(ac => ac.SlotID == toAdd.slot && ac.GroupID == toAdd.group);
-                }
+                throw new Exception("1");
             }
             else
             {
