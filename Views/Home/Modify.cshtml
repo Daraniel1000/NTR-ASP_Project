@@ -1,26 +1,27 @@
 @using lab1.Models
-@model Lista
+@model Modify
 @{
     ViewData["Title"] = "Planer";
 }
 
-@using (Html.BeginForm("ChangeSlot", "Home"))
+@using (Html.BeginForm("Modify", "Home"))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new {@class = "text-danger"})
 
     <div class="align-middle text-center">
         
-        @Html.DropDownListFor(Model=>Model.selectedSlot.group, new SelectList(Model.listy.groups), new {htmlAttributes =
+        @Html.DropDownListFor(Model=>Model.group, new SelectList(Model.listy.groups), new {htmlAttributes =
     new {@class = "form-control" }})
-        @Html.DropDownListFor(Model=>Model.selectedSlot.room, new SelectList(Model.listy.rooms), new {htmlAttributes =
+        @Html.DropDownListFor(Model=>Model.room, new SelectList(Model.listy.rooms), new {htmlAttributes =
     new {@class = "form-control" }})
-        @Html.DropDownListFor(Model=>Model.selectedSlot.teacher, new SelectList(Model.listy.teachers), new {htmlAttributes =
+        @Html.DropDownListFor(Model=>Model.teacher, new SelectList(Model.listy.teachers), new {htmlAttributes =
     new {@class = "form-control" }})
         <button name="slotid" class="btn btn-primary" type="submit" value=@Model.slotid>zapisz</button>
         <button name="slotid" class="btn btn-primary" type="submit" value=@Model.slotid asp-action="Index">Anuluj</button>
+        <button name="slotid" class="btn btn-primary" type="submit" value=@Model.slotid asp-action="Delete">Usuń</button>
     </div>
     <input type="hidden" name="what" value=@Model.what >
     <input type="hidden" name="selectedItem" value=@Model.selectedItem >
-    <input type="hidden" name="jsonString" value="@Model.jsonString">
+    <input type="hidden" name="toModify" value=@Model.toModify >
 }

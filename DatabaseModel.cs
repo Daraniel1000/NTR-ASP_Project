@@ -20,7 +20,6 @@ namespace NTR20Z
         public string Comment { get; set; }
         [Timestamp]
         public DateTime? Timestamp { get; set; }
-        virtual public List<Activity> activities { get; set; }
     }
 
     public class Slot
@@ -39,7 +38,6 @@ namespace NTR20Z
         public string Comment { get; set; }
         [Timestamp]
         public DateTime? Timestamp { get; set; }
-        virtual public List<Activity> activities { get; set; }
     }
 
     public class Room
@@ -50,7 +48,6 @@ namespace NTR20Z
         [Timestamp]
         public DateTime? Timestamp { get; set; }
 
-        virtual public List<Activity> activities { get; set; }
     }
 
     public class Assignment
@@ -63,9 +60,6 @@ namespace NTR20Z
         [Timestamp]
         public DateTime? Timestamp { get; set; }
 
-        public virtual Subject Subject { get; set; }
-        public virtual Group Group { get; set; }
-        public virtual Teacher Teacher { get; set; }
     }
 
     public class Activity
@@ -77,10 +71,5 @@ namespace NTR20Z
         public int SlotID { get; set; }
         [Timestamp]
         public DateTime? Timestamp { get; set; }
-
-        public virtual Subject Subject { get; set; }
-        public virtual Group Group { get; set; }
-        public virtual Room Room { get; set; }
-        public virtual Slot Slot { get; set; }
     }
 }
